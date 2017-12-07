@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Laki</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="reply_label">Reply</string>
+    <string name="number_of_participants">4 Participants</string>
+
+    <string-array name="game_types">
+        <item>Single</item>
+        <item>Friend to friend</item>
+        <item>Group</item>
+        <item>Championship</item>
+    </string-array>
+
+    <string-array name="payment_methods">
+        <item>MTN Mobile Money</item>
+        <item>Tigo Cash</item>
+        <item>Airtel Money</item>
+        <item>Paypal</item>
+        <item>Mater Card</item>
+    </string-array>
+
+</resources>

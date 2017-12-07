@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "227374522440",
+    "firebase_url": "https://roulette-1077e.firebaseio.com",
+    "project_id": "roulette-1077e",
+    "storage_bucket": "roulette-1077e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:227374522440:android:23ea56da86a70ba6",
+        "android_client_info": {
+          "package_name": "nassaty.playmatedesign"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "227374522440-0nn7o4tbj0q9kqqevlcg4t0tqoeirs6b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbm04tSRyMQ6tLJsShiYTTbKy0ZLdEwD0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
