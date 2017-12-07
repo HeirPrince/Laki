@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -123,8 +124,9 @@ public class trigger_Position extends Fragment implements BlockingStep {
     public void onCompleteClicked(StepperLayout.OnCompleteClickedCallback callback) {
         callback.complete();
         Intent intent = new Intent(getContext(), Rival.class);
-        EventBus.getDefault().post(new SimpleBus(opponent));
         getContext().startActivity(intent);
+        Toast.makeText(getContext(), "complete clicked"+opponent, Toast.LENGTH_SHORT).show();
+        EventBus.getDefault().post(new SimpleBus("hello"));
     }
 
     @Override

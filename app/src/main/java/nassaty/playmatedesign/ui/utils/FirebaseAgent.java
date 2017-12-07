@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +30,7 @@ import nassaty.playmatedesign.ui.activities.MainActivity;
 import nassaty.playmatedesign.ui.helpers.Constants;
 import nassaty.playmatedesign.ui.model.ActiveUser;
 import nassaty.playmatedesign.ui.model.CreditCard;
+import nassaty.playmatedesign.ui.model.Player;
 import nassaty.playmatedesign.ui.model.User;
 
 /**
@@ -54,6 +56,7 @@ public class FirebaseAgent {
     private DatabaseReference credit_cards;
     private DatabaseReference friendship;
     private StorageReference storageReference;
+    private DatabaseReference game_room;
     private Boolean isConnected;
     FirebaseAuth auth;
 
@@ -71,6 +74,7 @@ public class FirebaseAgent {
         games = database.getReference().child(Constants.DATABASE_PATH_GAME_SESSIONS);
         credit_cards = database.getReference().child(Constants.DATABASE_PATH_CREDIT_CARDS);
         friendship = database.getReference().child(Constants.DATABASE_PATH_FRIENDS);
+        game_room = database.getReference().child(Constants.DATABASE_PATH_GAME_SESSIONS);
         drive = FirebaseStorage.getInstance().getReference();
         online = FirebaseDatabase.getInstance().getReference().child(Constants.DATABASE_PATH_ONLINE_PLAYERS);
         auth = FirebaseAuth.getInstance();
@@ -381,6 +385,10 @@ public class FirebaseAgent {
         void onNameChangedListener(String name, String image);
     }
 
+    public interface getPlayerInfo{
+        void isSuccessful(Boolean status, Player player);
+    }
+
     public void getUserByPhone(String phone, final addOnNameChangeListener<String> onNameChangeListener) {
         users.child(phone).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -395,6 +403,57 @@ public class FirebaseAgent {
                 onNameChangeListener.onNameChangedListener(null, null);
             }
         });
+    }
+
+    public void getPlayerByPhone(String phone, String type, String game_type, final getPlayerInfo getPlayerInfo){
+        ChildEventListener listener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot != null && dataSnapshot.getValue() != null){
+                    Player player = dataSnapshot.getValue(Player.class);
+                    getPlayerInfo.isSuccessful(true, player);
+                }else {
+                    getPlayerInfo.isSuccessful(false, null);
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot != null && dataSnapshot.getValue() != null){
+                    Player player = dataSnapshot.getValue(Player.class);
+                    getPlayerInfo.isSuccessful(true, player);
+                }else {
+                    getPlayerInfo.isSuccessful(false, null);
+                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                if (dataSnapshot != null && dataSnapshot.getValue() != null){
+                    Player player = dataSnapshot.getValue(Player.class);
+                    getPlayerInfo.isSuccessful(true, player);
+                }else {
+                    getPlayerInfo.isSuccessful(false, null);
+                }
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot != null && dataSnapshot.getValue() != null){
+                    Player player = dataSnapshot.getValue(Player.class);
+                    getPlayerInfo.isSuccessful(true, player);
+                }else {
+                    getPlayerInfo.isSuccessful(false, null);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                getPlayerInfo.isSuccessful(false, null);
+            }
+        };
+
+        game_room.child(auth.getCurrentUser().getPhoneNumber()).child(type).child(game_type).addChildEventListener(listener);
     }
 
 

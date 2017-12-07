@@ -11,16 +11,18 @@ public class Player {
     private String cardNumber;
     private String cardCVV;
     private String cardEXP;
+    private int amount;
 
     public Player() {
     }
 
-    public Player(String phone, int position, String cardNumber, String cardCVV, String cardEXP) {
+    public Player(String phone, int position, String cardNumber, String cardCVV, String cardEXP, int amount) {
         this.phone = phone;
         this.position = position;
         this.cardNumber = cardNumber;
         this.cardCVV = cardCVV;
         this.cardEXP = cardEXP;
+        this.amount = amount;
     }
 
     public String getPhone() {
@@ -61,5 +63,13 @@ public class Player {
 
     public void setCardEXP(String cardEXP) {
         this.cardEXP = cardEXP;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 }

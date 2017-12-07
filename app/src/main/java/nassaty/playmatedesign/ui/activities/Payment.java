@@ -83,6 +83,8 @@ public class Payment extends AppCompatActivity implements StepperLayout.StepperL
         notification.setRead(false);
 
         specialBus = bus;
+
+
     }
 
     public void notifyOpponent(final Notif notification){
@@ -118,7 +120,18 @@ public class Payment extends AppCompatActivity implements StepperLayout.StepperL
     @Override
     public void onCompleted(View completeButton) {
         if (notification != null){
-            notifyOpponent(notification);
+//            notifyOpponent(notification);
+
+            Player player = new Player();
+            player.setPhone(user.getPhoneNumber());
+            player.setAmount(specialBus.getAmt());
+            player.setCardCVV(specialBus.getCardCvv());
+            player.setCardEXP(specialBus.getCardExpiry());
+            player.setCardNumber(specialBus.getCardNumber());
+            player.setPosition(specialBus.getPos());
+
+            //sending player info to rival activity
+            EventBus.getDefault().post(player);
         }else {
             Toast.makeText(this, "empty notification", Toast.LENGTH_SHORT).show();
         }
