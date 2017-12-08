@@ -58,9 +58,9 @@
                 android:value=".ui.activities.MainActivity" />
         </activity>
         <activity android:name=".ui.activities.Roulette" />
-        <!-- <activity -->
-        <!-- android:name="com.theartofdev.edmodo.cropper.CropImageActivity" -->
-        <!-- android:theme="@style/AppTheme.Crop" /> -->
+         <activity
+         android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+         android:theme="@style/AppTheme.Crop" />
         <activity android:name=".ui.activities.Prepare">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

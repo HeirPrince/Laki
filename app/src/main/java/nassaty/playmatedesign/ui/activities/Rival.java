@@ -14,14 +14,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import nassaty.playmatedesign.R;
-import nassaty.playmatedesign.ui.fragments.SimpleBus;
 import nassaty.playmatedesign.ui.utils.FirebaseAgent;
 import nassaty.playmatedesign.ui.utils.GameServiceHelper;
 import nassaty.playmatedesign.ui.utils.ImageUtils;
@@ -67,6 +64,7 @@ public class Rival extends AppCompatActivity {
 
         if (active != null){
             helper = new GameServiceHelper(this, active);
+            setHeader();
         }
     }
 
@@ -80,24 +78,16 @@ public class Rival extends AppCompatActivity {
         }
     }
 
-    @Subscribe (threadMode = ThreadMode.MAIN)
-    public void setHeader(SimpleBus bus){
-        //user
-//        agent.getUserByPhone(player.getPhone(), new FirebaseAgent.addOnNameChangeListener<String>() {
-//            @Override
-//            public void onNameChangedListener(String name, String image) {
-//                imageUtils.displayCircledImage(image, trigger_image);
-//                trigger_name.setText(name);
-//            }
-//        });
-//        trigger_price.setText(player.getAmount());
-//        trigger_position.setText(player.getPosition());
-//        Toast.makeText(this, "rival data : "+player.getPhone(), Toast.LENGTH_SHORT).show();
-        if (bus != null){
-            Toast.makeText(this, bus.getData(), Toast.LENGTH_SHORT).show();
-        }else {
-            Toast.makeText(this, "null bus", Toast.LENGTH_SHORT).show();
-        }
+    public void setHeader(){
+        agent.getUserByPhone(active.getPhoneNumber(), new FirebaseAgent.addOnNameChangeListener<String>() {
+            @Override
+            public void onNameChangedListener(String name, String image) {
+                trigger_name.setText(name);
+                imageUtils.displayCircledImage(image, trigger_image);
+            }
+        });
+
+        opponent_name.setText(getIntent().getStringExtra("opponent"));
     }
 
     @Override

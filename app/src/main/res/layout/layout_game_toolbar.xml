@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="150dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorPrimary"
+    android:background="@color/colorAccent"
     android:id="@+id/game_toolbar_layout"
     android:theme="@style/AppTheme">
 

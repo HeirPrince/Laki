@@ -1,8 +1,5 @@
 package nassaty.playmatedesign.ui.activities;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,9 +8,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.RemoteInput;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -121,11 +115,13 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void isRegistered(Boolean state) {
                     if (state){
-                        Toast.makeText(MainActivity.this, "registered", Toast.LENGTH_SHORT).show();
                         setupDrawer(auth.getCurrentUser().getPhoneNumber());
                         PlayGround.makeMeActive(auth.getCurrentUser().getPhoneNumber());
-                    }else {
-                        Toast.makeText(MainActivity.this, "register first", Toast.LENGTH_SHORT).show();
+                    }else if (!state){
+                        finish();
+                        Intent i = new Intent(MainActivity.this, UserData.class);
+                        i.putExtra("phone", auth.getCurrentUser().getPhoneNumber());
+                        startActivity(i);
                     }
                 }
             }, auth.getCurrentUser().getPhoneNumber());
@@ -171,9 +167,8 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     final User user = dataSnapshot.getValue(User.class);
 
-                    if (user != null){
+                    if (user != null) {
                         btnLogin.setVisibility(View.GONE);
-                        Toast.makeText(MainActivity.this, user.getPhone_number(), Toast.LENGTH_SHORT).show();
                         final CircleImageView dimage = header.findViewById(R.id.drawer_image);
                         final TextView dphone = header.findViewById(R.id.drawer_phone);
                         final TextView dname = header.findViewById(R.id.drawer_name);
@@ -182,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
                         agent.downloadImage(user.getImage(), Constants.STORAGE_PATH_USERS, new FirebaseAgent.OnStatusListener<Boolean>() {
                             @Override
                             public void isComplete(Boolean status, String url) {
-                                if (status && url != null){
+                                if (status && url != null) {
                                     Glide.with(MainActivity.this)
                                             .load(url)
                                             .centerCrop()
@@ -200,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                         drawer.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                             @Override
                             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                                switch (item.getItemId()){
+                                switch (item.getItemId()) {
                                     case R.id.pay:
                                         ViewCards();
                                         break;
@@ -211,18 +206,6 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
 
-                    }else {
-
-                        btnLogin.setVisibility(View.VISIBLE);
-                        btnLogin.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                //starts profile activity
-                                Intent i = new Intent(MainActivity.this, Authentication.class);
-                                i.putExtra("phone", auth.getCurrentUser().getPhoneNumber());
-                                startActivity(i);
-                            }
-                        });
                     }
                 }
 
@@ -232,8 +215,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-        }else{
-            Toast.makeText(this, "null", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -242,44 +223,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void sendNotification() {
-        String reply = "Click Here to enter Position";
-
-        RemoteInput remote = new RemoteInput.Builder(KEY_TEXT_REPLY)
-                .setLabel(reply)
-                .build();
-
-        Intent resultIntent = new Intent(this, chooseFriend.class);
-        TaskStackBuilder stack = TaskStackBuilder.create(this);
-
-        stack.addParentStack(chooseFriend.class);
-        stack.addNextIntent(resultIntent);
-
-        PendingIntent pending =
-                stack.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        NotificationCompat.Action action =
-                new NotificationCompat.Action.Builder(R.drawable.user, reply, pending)
-                        .addRemoteInput(remote)
-                        .setAllowGeneratedReplies(true)
-                        .build();
-
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .addAction(action)
-                        .setAutoCancel(true)
-                        .setSmallIcon(R.drawable.user)
-                        .setContentTitle("DevDeeds Says")
-                        .setContentText("Do you like my tutorials ?");
-
-        mBuilder.setContentIntent(pending);
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        //Show it
-        mNotificationManager.notify(mRequestCode, mBuilder.build());
-
-    }
 
     private void setUpViewPager(ViewPager pager) {
         SlideAdapter adapter = new SlideAdapter(getSupportFragmentManager());
@@ -387,7 +330,6 @@ public class MainActivity extends AppCompatActivity {
                             }else{
                                 Toast.makeText(MainActivity.this, "offline", Toast.LENGTH_SHORT).show();
                             }
-
                         }
 
                         @Override

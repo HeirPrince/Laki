@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="com.theartofdev.edmodo:android-image-cropper-2.4.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../Gradle/caches/transforms-1/files-1.1/android-image-cropper-2.4.0.aar/7d038f287383222cffac31d9a8d2994b/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../Gradle/caches/transforms-1/files-1.1/android-image-cropper-2.4.0.aar/7d038f287383222cffac31d9a8d2994b/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../Gradle/caches/modules-2/files-2.1/com.theartofdev.edmodo/android-image-cropper/2.4.0/b3d0a045c365c440beaa7799324019df3dea5a69/android-image-cropper-2.4.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -3,16 +3,18 @@ package nassaty.playmatedesign.ui.activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-//import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.IOException;
 
@@ -28,6 +30,8 @@ public class UserData extends AppCompatActivity {
     @BindView(R.id.profile_pic)CircleImageView profile;
     @BindView(R.id.profile_name)TextInputEditText pname;
     @BindView(R.id.image_crop)View imageCrop;
+    @BindView(R.id.toolbar)
+    android.support.v7.widget.Toolbar toolbar;
     private Uri filePath;
 
     FirebaseAuth auth;
@@ -38,7 +42,8 @@ public class UserData extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
         ButterKnife.bind(this);
-        
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Register");
 
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,24 +76,41 @@ public class UserData extends AppCompatActivity {
         agent.setupProfile(this, filePath, pname.getText().toString(), user.getPhoneNumber());
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.close_register:
+                finish();
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == Constants.GALLERY_CODE && resultCode == RESULT_OK && data != null && data.getData() != null){
-//            filePath = data.getData();
-////            CropImage.activity(filePath).start(this);
-//        }else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
-//            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-//            if (resultCode == RESULT_OK){
-//                Uri cropped = result.getUri();
-//                try {
-//                    Bitmap bmap = MediaStore.Images.Media.getBitmap(getContentResolver(), cropped);
-//                    profile.setImageBitmap(bmap);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
+        if (requestCode == Constants.GALLERY_CODE && resultCode == RESULT_OK && data != null && data.getData() != null){
+            filePath = data.getData();
+            CropImage.activity(filePath).start(this);
+        }else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK){
+                Uri cropped = result.getUri();
+                try {
+                    Bitmap bmap = MediaStore.Images.Media.getBitmap(getContentResolver(), cropped);
+                    profile.setImageBitmap(bmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }

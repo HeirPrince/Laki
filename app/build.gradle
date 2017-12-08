@@ -41,7 +41,7 @@ dependencies {
     implementation 'com.stepstone.stepper:material-stepper:4.3.1'
     compile 'io.github.yavski:fab-speed-dial:1.0.6'
     compile 'biz.kasual:materialnumberpicker:1.2.1'
-//    implementation 'com.theartofdev.edmodo:android-image-cropper:2.4.0'
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.4.0'
     compile 'com.android.support:support-v4:26.1.0'
     compile 'com.google.firebase:firebase-core:11.6.2'
     compile 'com.google.firebase:firebase-firestore:11.6.2'

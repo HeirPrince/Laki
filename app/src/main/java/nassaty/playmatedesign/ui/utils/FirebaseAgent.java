@@ -299,13 +299,9 @@ public class FirebaseAgent {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if (user != null) {
-                    if (user.getPhone_number() != null) {
-                        isRegisteredListener.isRegistered(true);
-                    } else {
-                        isRegisteredListener.isRegistered(false);
-                    }
-                } else {
-                    Toast.makeText(ctx, "user not found", Toast.LENGTH_SHORT).show();
+                    isRegisteredListener.isRegistered(true);
+                }else {
+                    isRegisteredListener.isRegistered(false);
                 }
             }
 

@@ -69,7 +69,7 @@ public class Online extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        showList();
+        showList();
     }
 
     @Override
