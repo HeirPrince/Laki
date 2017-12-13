@@ -1,5 +1,6 @@
 package nassaty.playmatedesign.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nassaty.playmatedesign.R;
 import nassaty.playmatedesign.ui.data.SpecialBus;
+import nassaty.playmatedesign.ui.fragments.SimpleBus;
 import nassaty.playmatedesign.ui.helpers.Constants;
 import nassaty.playmatedesign.ui.model.Notif;
 import nassaty.playmatedesign.ui.model.Player;
@@ -38,6 +40,7 @@ public class Payment extends AppCompatActivity implements StepperLayout.StepperL
     private PlayGround playGround;
     private Notif notification;
     private SpecialBus specialBus;
+    private Player trigger;
 
 
     @Override
@@ -52,14 +55,16 @@ public class Payment extends AppCompatActivity implements StepperLayout.StepperL
         user = auth.getCurrentUser();
         opponent = getIntent().getStringExtra("opponent");
         playGround = new PlayGround(this);
-        stepperLayout.setListener(this);
         notification = new Notif();
+        stepperLayout.setListener(this);
+
 
         if (user != null){
             stepperLayout.
                     setAdapter(new Trigger_StepAdapter(getSupportFragmentManager(),
                             this));
             gameServiceHelper = new GameServiceHelper(this, user);
+            sendOpponentPhone();
 
         }else {
             //authenticate
@@ -76,31 +81,34 @@ public class Payment extends AppCompatActivity implements StepperLayout.StepperL
         int amt = bus.getAmt();
         int position = bus.getPos();
 
-        notification.setSender(user.getPhoneNumber());
-        notification.setSender_position(position);
-        notification.setReceiver(opponent);
-        notification.setType(Constants.FRIEND_TYPE);
-        notification.setRead(false);
+        Toast.makeText(this, String.valueOf(position), Toast.LENGTH_SHORT).show();
 
         specialBus = bus;
 
-
+        if (user != null){
+            notification.setSender(user.getPhoneNumber());
+            notification.setSender_position(bus.getPos());
+            notification.setReceiver(opponent);
+            notification.setType(Constants.FRIEND_TYPE);
+            notification.setRead(false);
+        }else {
+            Toast.makeText(Payment.this, "user : "+user.getPhoneNumber() + " isn't available", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    public void notifyOpponent(final Notif notification){
+    public void notifyOpponent(Notif notification){
         playGround.sendGameNotification(notification, notification.getReceiver(), new PlayGround.NotificationListener<Boolean>() {
             @Override
             public void isNotificationSent(Boolean status) {
                 if (status){
                     Toast.makeText(Payment.this, "delivered", Toast.LENGTH_SHORT).show();
-                    Player player = new Player();
-                    player.setPhone(user.getPhoneNumber());
-                    player.setCardNumber(specialBus.getCardNumber());
-                    player.setCardCVV(specialBus.getCardCvv());
-                    player.setCardEXP(specialBus.getCardExpiry());
-                    player.setPosition(specialBus.getPos());
+                    if (specialBus != null){
+                        EventBus.getDefault().post(specialBus);
+                    }else {
+                        Toast.makeText(Payment.this, "bus empty", Toast.LENGTH_SHORT).show();
+                    }
 
-                    gameServiceHelper.setGameSession(player, new GameServiceHelper.createSession() {
+                    gameServiceHelper.setGameSession(trigger, new GameServiceHelper.createSession() {
                         @Override
                         public void isSessionCreated(Boolean status) {
                             if (status){
@@ -117,23 +125,20 @@ public class Payment extends AppCompatActivity implements StepperLayout.StepperL
         });
     }
 
+    public void sendOpponentPhone(){
+        EventBus.getDefault().post(new SimpleBus(getIntent().getStringExtra("opponent")));
+    }
+
+
     @Override
     public void onCompleted(View completeButton) {
-        if (notification != null){
-//            notifyOpponent(notification);
-
-            Player player = new Player();
-            player.setPhone(user.getPhoneNumber());
-            player.setAmount(specialBus.getAmt());
-            player.setCardCVV(specialBus.getCardCvv());
-            player.setCardEXP(specialBus.getCardExpiry());
-            player.setCardNumber(specialBus.getCardNumber());
-            player.setPosition(specialBus.getPos());
-
-            //sending player info to rival activity
-            EventBus.getDefault().post(player);
-        }else {
-            Toast.makeText(this, "empty notification", Toast.LENGTH_SHORT).show();
+        if (notification != null) {
+            notifyOpponent(notification);
+            Intent intent = new Intent(Payment.this, Rival.class);
+            intent.putExtra("opponent", opponent);
+            startActivity(intent);
+        } else {
+            Toast.makeText(Payment.this, "empty", Toast.LENGTH_SHORT).show();
         }
     }
 

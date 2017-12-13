@@ -137,10 +137,12 @@ public class chooseFriend extends AppCompatActivity {
     }
 
     public void attachListeners() {
+        user_list.clear();
         friendship.addChildEventListener(listener);
     }
 
     public void detachListeners() {
+        user_list.clear();
         friendship.removeEventListener(listener);
     }
 

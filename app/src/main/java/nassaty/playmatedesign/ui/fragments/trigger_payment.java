@@ -26,12 +26,8 @@ import nassaty.playmatedesign.ui.data.SpecialBus;
 public class trigger_payment extends Fragment implements BlockingStep {
 
     private CardForm cardForm;
-    onCardValidated mCallback;
     private SpecialBus all;
 
-    public interface onCardValidated{
-        void Data(CardForm cardForm);
-    }
 
     public trigger_payment() {
         // Required empty public constructor

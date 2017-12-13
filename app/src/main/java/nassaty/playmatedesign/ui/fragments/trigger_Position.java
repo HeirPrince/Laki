@@ -2,7 +2,6 @@ package nassaty.playmatedesign.ui.fragments;
 
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,21 +13,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.stepstone.stepper.BlockingStep;
 import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import biz.kasual.materialnumberpicker.MaterialNumberPicker;
 import nassaty.playmatedesign.R;
-import nassaty.playmatedesign.ui.activities.Rival;
 import nassaty.playmatedesign.ui.data.SpecialBus;
-import nassaty.playmatedesign.ui.utils.PlayGround;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,9 +33,7 @@ public class trigger_Position extends Fragment implements BlockingStep {
     private String cardn, carde, cardc, opponent;
     private int amt, qty, pos;
     private SpecialBus next;
-    private PlayGround playGround;
-    private FirebaseAuth auth;
-    private FirebaseUser user;
+    private SpecialBus specialBus;
 
     public trigger_Position() {
         // Required empty public constructor
@@ -54,9 +45,7 @@ public class trigger_Position extends Fragment implements BlockingStep {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trigger__position, container, false);
         pick = view.findViewById(R.id.position);
-        playGround = new PlayGround(getActivity());
-        auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
+
 
         pick.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,16 +54,6 @@ public class trigger_Position extends Fragment implements BlockingStep {
             }
         });
         return view;
-    }
-
-    @Subscribe (threadMode = ThreadMode.MAIN)
-    public void getAll(SpecialBus b){
-        cardn = b.getCardNumber();
-        carde = b.getCardExpiry();
-        cardc = b.getCardCvv();
-        qty = b.getQty();
-        amt = b.getAmt();
-        opponent = b.getOpponent();
     }
 
     public void approvePosition() {
@@ -102,6 +81,8 @@ public class trigger_Position extends Fragment implements BlockingStep {
         EventBus.getDefault().post(next);
     }
 
+
+
     public void setupDialog() {
         positionPicker = new MaterialNumberPicker.Builder(getContext())
                 .minValue(0)
@@ -123,10 +104,6 @@ public class trigger_Position extends Fragment implements BlockingStep {
     @Override
     public void onCompleteClicked(StepperLayout.OnCompleteClickedCallback callback) {
         callback.complete();
-        Intent intent = new Intent(getContext(), Rival.class);
-        intent.putExtra("opponent", opponent);
-        getContext().startActivity(intent);
-        EventBus.getDefault().post(new SimpleBus("hello"));
     }
 
     @Override
@@ -148,17 +125,5 @@ public class trigger_Position extends Fragment implements BlockingStep {
     @Override
     public void onError(@NonNull VerificationError error) {
 
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
     }
 }

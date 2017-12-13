@@ -78,8 +78,8 @@ public class FirebaseAgent {
         drive = FirebaseStorage.getInstance().getReference();
         online = FirebaseDatabase.getInstance().getReference().child(Constants.DATABASE_PATH_ONLINE_PLAYERS);
         auth = FirebaseAuth.getInstance();
-        storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(Constants.STORAGE_PATH_URL);
         user = new User();
+        storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(Constants.STORAGE_PATH_URL);
     }
 
     public boolean isConnected() {

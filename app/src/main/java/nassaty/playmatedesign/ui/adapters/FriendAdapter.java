@@ -259,6 +259,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.DataHolder
 
         @Override
         public void onClick(View view) {
+            //init interface
             int position = getAdapterPosition();
             final User user = userList.get(position);
 

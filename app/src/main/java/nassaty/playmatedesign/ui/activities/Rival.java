@@ -14,11 +14,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import nassaty.playmatedesign.R;
+import nassaty.playmatedesign.ui.data.SpecialBus;
+import nassaty.playmatedesign.ui.helpers.Constants;
+import nassaty.playmatedesign.ui.model.Player;
 import nassaty.playmatedesign.ui.utils.FirebaseAgent;
 import nassaty.playmatedesign.ui.utils.GameServiceHelper;
 import nassaty.playmatedesign.ui.utils.ImageUtils;
@@ -34,6 +39,7 @@ public class Rival extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseUser active;
     private ImageUtils imageUtils;
+    private Player currentPlayer;
 
     @BindView(R.id.wheel)ImageView wheel;
     @BindView(R.id.game_toolbar)Toolbar toolbar;
@@ -61,11 +67,22 @@ public class Rival extends AppCompatActivity {
         playGround = new PlayGround(this);
         agent = new FirebaseAgent(this);
         imageUtils = new ImageUtils(this);
+        currentPlayer = new Player();
 
         if (active != null){
             helper = new GameServiceHelper(this, active);
             setHeader();
         }
+    }
+
+    @Subscribe (threadMode = ThreadMode.MAIN)
+    public void getPlayer(SpecialBus bus){
+        currentPlayer.setCardNumber(bus.getCardNumber());
+        currentPlayer.setPosition(bus.getPos());
+        currentPlayer.setCardEXP(bus.getCardExpiry());
+        currentPlayer.setCardCVV(bus.getCardCvv());
+        currentPlayer.setAmount(bus.getAmt());
+        currentPlayer.setPhone(active.getPhoneNumber());
     }
 
     public void decideWinner(int pos, int tpos, int opos) {
@@ -79,15 +96,46 @@ public class Rival extends AppCompatActivity {
     }
 
     public void setHeader(){
-        agent.getUserByPhone(active.getPhoneNumber(), new FirebaseAgent.addOnNameChangeListener<String>() {
+        //trigger
+        agent.getUserByPhone(currentPlayer.getPhone(), new FirebaseAgent.addOnNameChangeListener<String>() {
             @Override
             public void onNameChangedListener(String name, String image) {
                 trigger_name.setText(name);
-                imageUtils.displayCircledImage(image, trigger_image);
+                agent.downloadImage(image, Constants.STORAGE_PATH_USERS, new FirebaseAgent.OnStatusListener<Boolean>() {
+                    @Override
+                    public void isComplete(Boolean status, String url) {
+                        imageUtils.displayCircledImage(url, trigger_image);
+                    }
+
+                    @Override
+                    public void isFailed(Boolean failed) {
+
+                    }
+                });
+                trigger_position.setText(String.valueOf(currentPlayer.getPosition()));
             }
         });
 
-        opponent_name.setText(getIntent().getStringExtra("opponent"));
+        //opponent
+        final String opponent = getIntent().getStringExtra("opponent");
+        agent.getUserByPhone(opponent, new FirebaseAgent.addOnNameChangeListener<String>() {
+            @Override
+            public void onNameChangedListener(String name, String image) {
+                opponent_name.setText(name);
+                agent.downloadImage(image, Constants.STORAGE_PATH_USERS, new FirebaseAgent.OnStatusListener<Boolean>() {
+                    @Override
+                    public void isComplete(Boolean status, String url) {
+                        imageUtils.displayCircledImage(url, opponent_image);
+                    }
+
+                    @Override
+                    public void isFailed(Boolean failed) {
+
+                    }
+                });
+            }
+        });
+
     }
 
     @Override
@@ -102,7 +150,6 @@ public class Rival extends AppCompatActivity {
             case R.id.replay:
                 Toast.makeText(this, "replay action clicked ma man :D", Toast.LENGTH_SHORT).show();
         }
-
         return super.onOptionsItemSelected(item);
     }
 
