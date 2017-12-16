@@ -10,8 +10,8 @@ import com.stepstone.stepper.adapter.AbstractFragmentStepAdapter;
 import com.stepstone.stepper.viewmodel.StepViewModel;
 
 import nassaty.playmatedesign.ui.fragments.Checkout;
-import nassaty.playmatedesign.ui.fragments.Process_payment;
 import nassaty.playmatedesign.ui.fragments.choosePosition;
+import nassaty.playmatedesign.ui.fragments.chooseToken;
 
 /**
  * Created by Prince on 10/30/2017.
@@ -35,9 +35,9 @@ public class StepAdapter extends AbstractFragmentStepAdapter {
 
         switch (position){
             case 0:
-                Process_payment pay = new Process_payment();
-                pay.setArguments(b);
-                return pay;
+                chooseToken chooseToken = new chooseToken();
+                chooseToken.setArguments(b);
+                return chooseToken;
 
             case 1:
                 Checkout checkout = new Checkout();

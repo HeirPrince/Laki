@@ -15,11 +15,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import nassaty.playmatedesign.ui.helpers.Constants;
 import nassaty.playmatedesign.ui.model.GameMetaData;
 import nassaty.playmatedesign.ui.model.Player;
+import nassaty.playmatedesign.ui.model.Token;
 
 /**
  * Created by Prince on 11/20/2017.
@@ -27,9 +30,9 @@ import nassaty.playmatedesign.ui.model.Player;
 
 public class GameServiceHelper {
 
-    createSession mSessionCallBack;
     private FirebaseDatabase database;
     private DatabaseReference game_session;
+    private DatabaseReference users;
     private Context ctx;
     private FirebaseUser active;
 
@@ -38,6 +41,7 @@ public class GameServiceHelper {
         this.ctx = context;
         this.database = FirebaseDatabase.getInstance();
         this.game_session = database.getReference().child(Constants.DATABASE_PATH_GAME_SESSIONS);
+        this.users = database.getReference().child(Constants.DATABASE_PATH_USERS);
         this.active = user;
     }
 
@@ -56,6 +60,22 @@ public class GameServiceHelper {
 
     public interface createGroupSession {
         void isCreated(Boolean status);
+    }
+
+    public interface addnewToken{
+        void tokenCallBack(Boolean status);
+    }
+
+    public interface getTokens{
+        void tokenList(List<Token> tokens);
+    }
+
+    public interface useToken {
+        void isTokenUsed(Boolean status);
+    }
+
+    public interface TokenCount{
+        void tokenNumber(int total);
     }
 
     //methods
@@ -176,6 +196,82 @@ public class GameServiceHelper {
 
             }
         });
+    }
+
+    public void addGameToken(int number, int amount, final addnewToken addnewToken){
+
+        for (int i = 1; i<= number; i++){
+            Token token = new Token();
+            token.setToken_id(returnRandomTokenId());
+            token.setAmount(amount);
+            users.child(active.getPhoneNumber()).child(Constants.DATABASE_PATH_TOKENS).child(String.valueOf(token.getAmount())).push().setValue(token).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    addnewToken.tokenCallBack(task.isSuccessful());
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    addnewToken.tokenCallBack(false);
+                }
+            });
+        }
+    }
+
+    public void getTokenList(String phone, final getTokens getTokens){
+        final List<Token> tokens = new ArrayList<>();
+        tokens.clear();
+        users.child(active.getPhoneNumber()).child(Constants.DATABASE_PATH_TOKENS).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Token token = dataSnapshot.getValue(Token.class);
+                tokens.add(token);
+                getTokens.tokenList(tokens);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                getTokens.tokenList(tokens);
+            }
+        });
+    }
+
+    public void useToken(String id, final useToken callback){
+        users.child(active.getPhoneNumber()).child(Constants.DATABASE_PATH_TOKENS).child(id).removeValue()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        callback.isTokenUsed(task.isSuccessful());
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                callback.isTokenUsed(false);
+            }
+        });
+    }
+
+    public void getTokenCount(String phone, int amount, final TokenCount count){
+        users.child(phone).child(Constants.DATABASE_PATH_TOKENS).child(String.valueOf(amount)).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot != null){
+                    count.tokenNumber((int) dataSnapshot.getChildrenCount());
+                }else {
+                    count.tokenNumber(0);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                count.tokenNumber(0);
+            }
+        });
+    }
+
+    public int returnRandomTokenId(){
+        int rnd = new Random().nextInt(500);
+        return rnd;
     }
 
 }

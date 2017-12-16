@@ -31,9 +31,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.activities.MainActivity" />
         </activity>
-        <activity android:name=".ui.activities.Rival" >
-
-        </activity>
+        <activity android:name=".ui.activities.Rival"></activity>
         <activity android:name=".ui.activities.Profile">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -58,9 +56,9 @@
                 android:value=".ui.activities.MainActivity" />
         </activity>
         <activity android:name=".ui.activities.Roulette" />
-         <activity
-         android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-         android:theme="@style/AppTheme.Crop" />
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/AppTheme.Crop" />
         <activity android:name=".ui.activities.Prepare">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -78,8 +76,13 @@
                 android:value=".ui.activities.chooseFriend" />
         </activity>
         <activity android:name=".ui.activities.MaterialDesignClass" />
-        <activity android:name=".ui.activities.Multi"></activity>
-        <activity android:name=".ui.activities.groupGame"></activity>
+        <activity android:name=".ui.activities.Multi" />
+        <activity android:name=".ui.activities.groupGame" />
+        <activity android:name=".ui.activities.AddToken">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.activities.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

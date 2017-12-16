@@ -42,7 +42,6 @@ public class Constants {
     public static final String STORAGE_PATH_URL = "gs://roulette-1077e.appspot.com";
     public static final String STORAGE_PATH_USERS = "users/";
     public static final String STORAGE_PATH_POSTS = "posts/";
-
     //firebase database
     public static final String DATABASE_PATH_USERS = "users";
     public static final String DATABASE_PATH_GROUPS = "groups";
@@ -54,6 +53,7 @@ public class Constants {
     public static final String DATABASE_PATH_FRIENDS = "friendship";
     public static final String DATABASE_PATH_NOTIFICATIONS = "notifications";
     public static final String DATABASE_PATH_CREDIT_CARDS = "credit_cards";
+    public static final String DATABASE_PATH_TOKENS = "tokens";
     public static final String DATABASE_PATH_ROOM = "rooms";
     public static final String PLAYING = "playing";
     public static final String PARTICIPANTS = "participants";

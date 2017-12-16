@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="com.jaredrummler:material-spinner-1.2.3">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../Gradle/caches/transforms-1/files-1.1/material-spinner-1.2.3.aar/1b19f7dfd679652698a7ac364d9660bc/res" />
+      <root url="jar://$PROJECT_DIR$/../../Gradle/caches/transforms-1/files-1.1/material-spinner-1.2.3.aar/1b19f7dfd679652698a7ac364d9660bc/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../Gradle/caches/modules-2/files-2.1/com.jaredrummler/material-spinner/1.2.3/b3e304c98d0941b203223323bcae5066b35ac5b4/material-spinner-1.2.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -199,6 +199,9 @@ public class MainActivity extends AppCompatActivity {
                                     case R.id.pay:
                                         ViewCards();
                                         break;
+                                    case R.id.fav:
+                                        startActivity(new Intent(MainActivity.this, AddToken.class));
+                                        break;
 
                                 }
 
