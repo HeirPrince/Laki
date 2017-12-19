@@ -1,13 +1,16 @@
 package nassaty.playmatedesign.ui.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -56,6 +59,7 @@ public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.Viewholder> {
     public void onBindViewHolder(Viewholder holder, int position) {
         int amount = amounts.get(position);
         holder.distributeAmounts(amount);
+
     }
 
     @Override
@@ -67,6 +71,9 @@ public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.Viewholder> {
 
         public Button amount;
         public TextView number;
+        int current = 1;
+        int tot;
+        int c_amt;
 
         public Viewholder(View itemView) {
             super(itemView);
@@ -75,11 +82,13 @@ public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.Viewholder> {
         }
 
         public void distributeAmounts(int amt) {
-            amount.setText(String.valueOf(amt)+" RWF");
+            c_amt = amt;
+            amount.setText(String.valueOf(amt) + " RWF");
             gameServiceHelper.getTokenCount(activeUser.getPhoneNumber(), amt, new GameServiceHelper.TokenCount() {
                 @Override
                 public void tokenNumber(int total) {
-                    number.setText(String.valueOf(total)+" Coins");
+                    number.setText(String.valueOf(total) + " Coins");
+                    tot = total;
                 }
             });
             amount.setOnClickListener(this);
@@ -88,13 +97,52 @@ public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.Viewholder> {
         @Override
         public void onClick(View view) {
             boolean wrapInScrollView = true;
-            new MaterialDialog.Builder(context)
+            MaterialDialog dialog = new MaterialDialog.Builder(context)
                     .title("Use coins")
                     .customView(R.layout.dialog_pay_token, wrapInScrollView)
                     .positiveText("DONE")
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            Toast.makeText(context, "your coins are worth : "+current * c_amt + " RWF", Toast.LENGTH_SHORT).show();
+                        }
+                    })
                     .show();
-        }
 
+            final Button btnAdd, btnDecrease;
+            final TextView value;
+
+            value = (TextView) dialog.findViewById(R.id.value);
+            value.setText(String.valueOf(current));
+            btnAdd = (Button) dialog.findViewById(R.id.plus);
+            btnDecrease = (Button) dialog.findViewById(R.id.minus);
+
+            btnDecrease.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (current > 1) {
+                        current = current - 1;
+                        value.setText(String.valueOf(current));
+                    }
+                    if (value.getText().toString().equals(String.valueOf(1))) {
+                        btnDecrease.setEnabled(false);
+                        btnAdd.setEnabled(true);
+                    }
+                }
+            });
+
+            btnAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    current = current + 1;
+                    value.setText(String.valueOf(current));
+                    if (current == tot) {
+                        btnAdd.setEnabled(false);
+                        btnDecrease.setEnabled(true);
+                    }
+                }
+            });
+        }
     }
 
 }
