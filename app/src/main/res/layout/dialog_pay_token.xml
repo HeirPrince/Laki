@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="200dp"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/shrimpy_gradient">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/coins"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:layout_marginLeft="6dp"
+                android:text="500"
+                android:id="@+id/cash"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="end"
+                android:background="@drawable/coins_amt"/>
+
+            <TextView
+                android:layout_gravity="end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:layout_marginLeft="6dp"
+                android:text="5"
+                android:id="@+id/coins"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/values"
+        android:layout_centerInParent="true">
+
+        <Button
+            android:layout_centerVertical="true"
+            android:layout_width="40dp"
+            android:layout_height="80dp"
+            android:text="-"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            android:textColor="#fff"
+            android:id="@+id/minus"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_toEndOf="@id/minus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5"
+            android:layout_marginRight="6dp"
+            android:layout_marginLeft="6dp"
+            android:id="@+id/value"
+            android:textSize="60sp"
+            android:textColor="#fff"
+            android:layout_centerVertical="true"/>
+
+
+        <Button
+            android:layout_centerVertical="true"
+            android:layout_width="40dp"
+            android:layout_height="80dp"
+            android:text="+"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            android:id="@+id/plus"
+            android:textColor="#fff"
+            android:layout_toEndOf="@+id/value"
+            android:textStyle="bold"
+            style="@style/Widget.AppCompat.Button.Borderless" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

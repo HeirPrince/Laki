@@ -14,7 +14,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import nassaty.playmatedesign.R;
-import nassaty.playmatedesign.ui.activities.PayBack;
+import nassaty.playmatedesign.ui.activities.CoinMaster;
 import nassaty.playmatedesign.ui.helpers.Constants;
 import nassaty.playmatedesign.ui.model.Notif;
 import nassaty.playmatedesign.ui.utils.FirebaseAgent;
@@ -191,7 +191,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         public void onClick(View view) {
             int position = getAdapterPosition();
             Notif notification = notifList.get(position);
-            Intent intent = new Intent(context, PayBack.class);
+            Intent intent = new Intent(context, CoinMaster.class);
             intent.putExtra("sender", notification.getSender());
             intent.putExtra("receiver", notification.getReceiver());
             intent.putExtra("sender_position", notification.getSender_position());

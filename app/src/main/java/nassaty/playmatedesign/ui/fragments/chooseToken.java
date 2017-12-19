@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +14,13 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.stepstone.stepper.BlockingStep;
 import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
 
 import nassaty.playmatedesign.R;
+import nassaty.playmatedesign.ui.adapters.CoinAdapter;
 import nassaty.playmatedesign.ui.utils.GameServiceHelper;
 
 /**
@@ -28,11 +31,15 @@ public class chooseToken extends Fragment implements BlockingStep {
     private TextView val, tokens, cash;
     private Button plus;
     private Button minus;
+    private MaterialSpinner spinner;
     private GameServiceHelper gameServiceHelper;
+    private RecyclerView coinList;
+    private CoinAdapter adapter;
     private FirebaseAuth auth;
     private FirebaseUser active;
     int current = 1;
     int amount;
+    int tot;
 
 
 
@@ -51,12 +58,13 @@ public class chooseToken extends Fragment implements BlockingStep {
         tokens = v.findViewById(R.id.total);
         plus = v.findViewById(R.id.plus);
         minus = v.findViewById(R.id.minus);
+        spinner = v.findViewById(R.id.spinner);
+        coinList = v.findViewById(R.id.coin_list);
 
         auth = FirebaseAuth.getInstance();
         active = auth.getCurrentUser();
         gameServiceHelper = new GameServiceHelper(getContext(), active);
 
-        amount = 500;//replace with user action
         updateUI();
 
         plus.setOnClickListener(new View.OnClickListener() {
@@ -94,7 +102,7 @@ public class chooseToken extends Fragment implements BlockingStep {
         if (current > 1){
             current = current - 1;
             val.setText(String.valueOf(current));
-            cash.setText(String.valueOf(amount * current)+"$");
+            cash.setText(String.valueOf(amount * current)+" $");
         }
         if (val.getText().toString().contains(String.valueOf(1))){
             minus.setEnabled(false);
@@ -103,22 +111,13 @@ public class chooseToken extends Fragment implements BlockingStep {
     }
 
     private void addToken() {
-        gameServiceHelper.getTokenCount(active.getPhoneNumber(), amount, new GameServiceHelper.TokenCount() {
-            @Override
-            public void tokenNumber(int total) {
-                if (total == 0){
-                    val.setText(0);
-                }else {
-                    current = current + 1;
-                    cash.setText(String.valueOf(amount * current)+"$");
-                    val.setText(String.valueOf(current));
-                    if (current == total) {
-                        plus.setEnabled(false);
-                        minus.setEnabled(true);
-                    }
-                }
-            }
-        });
+        current = current + 1;
+        cash.setText(String.valueOf(amount * current)+" $");
+        val.setText(String.valueOf(current));
+        if (current == tot) {
+            plus.setEnabled(false);
+            minus.setEnabled(true);
+        }
 
     }
 
@@ -134,7 +133,7 @@ public class chooseToken extends Fragment implements BlockingStep {
 
     @Override
     public void onBackClicked(StepperLayout.OnBackClickedCallback onBackClickedCallback) {
-
+        onBackClickedCallback.goToPrevStep();
     }
 
     @Nullable

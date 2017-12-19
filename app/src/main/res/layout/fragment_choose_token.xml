@@ -6,115 +6,62 @@
     android:background="@drawable/shrimpy_gradient"
     tools:context="nassaty.playmatedesign.ui.fragments.chooseToken">
 
-    <android.support.v7.widget.CardView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_margin="4dp"
-        app:cardElevation="4dp"
-        app:cardCornerRadius="4dp">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:id="@+id/header">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/coins"
+            android:id="@+id/big_icon"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop" />
+
+
+        <com.jaredrummler.materialspinner.MaterialSpinner
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
+            android:layout_marginLeft="16dp"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/big_icon"
+            android:id="@+id/spinner"
+            app:ms_arrow_tint="@color/colorAccent"
+            app:ms_dropdown_max_height="100dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal"
+            android:id="@+id/coins">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/coins"
-                android:id="@+id/icon"
-                android:layout_alignParentStart="true"
-                android:scaleType="centerCrop" />
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/coins_amt"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Coins"
-                android:layout_toRightOf="@+id/icon"
-                android:textSize="30sp"
-                android:textColor="#000"
+                android:text="0"
+                android:layout_marginLeft="2dp"
+                android:layout_gravity="center"
+                android:layout_toRightOf="@+id/text"
+                android:textSize="15sp"
                 android:textStyle="bold"
-                android:layout_marginLeft="16dp"
-                android:id="@+id/text"/>
+                android:id="@+id/total"
+                android:textColor="#fff"/>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:orientation="horizontal">
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/coins_amt"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:layout_marginLeft="2dp"
-                    android:layout_gravity="center"
-                    android:layout_toRightOf="@+id/text"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:id="@+id/total"/>
-
-
-            </LinearLayout>
-
-
-        </RelativeLayout>
-
-    </android.support.v7.widget.CardView>
-
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/values"
-        android:layout_centerInParent="true">
-
-        <Button
-            android:layout_centerVertical="true"
-            android:layout_width="40dp"
-            android:layout_height="80dp"
-            android:text="-"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:textAlignment="center"
-            android:textSize="30sp"
-            android:textColor="#fff"
-            android:id="@+id/minus"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:layout_toEndOf="@id/minus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="5"
-            android:layout_marginRight="6dp"
-            android:layout_marginLeft="6dp"
-            android:id="@+id/value"
-            android:textSize="60sp"
-            android:textColor="#fff"
-            android:layout_centerVertical="true"/>
-
-
-        <Button
-            android:layout_centerVertical="true"
-            android:layout_width="40dp"
-            android:layout_height="80dp"
-            android:text="+"
-            android:textAlignment="center"
-            android:textSize="30sp"
-            android:id="@+id/plus"
-            android:textColor="#fff"
-            android:layout_toEndOf="@+id/value"
-            android:textStyle="bold"
-            style="@style/Widget.AppCompat.Button.Borderless" />
+        </LinearLayout>
 
     </RelativeLayout>
 
@@ -125,5 +72,11 @@
         android:textColor="#fff"
         android:layout_below="@id/values"
         android:layout_centerHorizontal="true"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/coin_list"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

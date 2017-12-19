@@ -78,6 +78,10 @@ public class GameServiceHelper {
         void tokenNumber(int total);
     }
 
+    public interface getTokenAmounts{
+        void items(List<Integer> items);
+    }
+
     //methods
     public void setGameSession(Player player, final createSession session) {
         game_session.child(active.getPhoneNumber()).child(Constants.FRIEND_TYPE).push().child("trigger").setValue(player).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -204,7 +208,7 @@ public class GameServiceHelper {
             Token token = new Token();
             token.setToken_id(returnRandomTokenId());
             token.setAmount(amount);
-            users.child(active.getPhoneNumber()).child(Constants.DATABASE_PATH_TOKENS).child(String.valueOf(token.getAmount())).push().setValue(token).addOnCompleteListener(new OnCompleteListener<Void>() {
+            users.child(active.getPhoneNumber()).child(Constants.DATABASE_PATH_COINS).child(String.valueOf(token.getAmount())).push().setValue(token).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     addnewToken.tokenCallBack(task.isSuccessful());
@@ -221,7 +225,7 @@ public class GameServiceHelper {
     public void getTokenList(String phone, final getTokens getTokens){
         final List<Token> tokens = new ArrayList<>();
         tokens.clear();
-        users.child(active.getPhoneNumber()).child(Constants.DATABASE_PATH_TOKENS).addValueEventListener(new ValueEventListener() {
+        users.child(active.getPhoneNumber()).child(Constants.DATABASE_PATH_COINS).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Token token = dataSnapshot.getValue(Token.class);
@@ -237,7 +241,7 @@ public class GameServiceHelper {
     }
 
     public void useToken(String id, final useToken callback){
-        users.child(active.getPhoneNumber()).child(Constants.DATABASE_PATH_TOKENS).child(id).removeValue()
+        users.child(active.getPhoneNumber()).child(Constants.DATABASE_PATH_COINS).child(id).removeValue()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -252,7 +256,7 @@ public class GameServiceHelper {
     }
 
     public void getTokenCount(String phone, int amount, final TokenCount count){
-        users.child(phone).child(Constants.DATABASE_PATH_TOKENS).child(String.valueOf(amount)).addValueEventListener(new ValueEventListener() {
+        users.child(phone).child(Constants.DATABASE_PATH_COINS).child(String.valueOf(amount)).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot != null){
@@ -265,6 +269,24 @@ public class GameServiceHelper {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 count.tokenNumber(0);
+            }
+        });
+    }
+
+    public void getTokenAmountList(String phone, final getTokenAmounts callback){
+        final List<Integer> amounts = new ArrayList<>();
+        users.child(phone).child(Constants.DATABASE_PATH_COINS).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()){
+                    amounts.add(Integer.valueOf(ds.getKey()));
+                    callback.items(amounts);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }
