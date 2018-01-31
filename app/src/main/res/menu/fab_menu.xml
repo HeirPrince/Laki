@@ -5,6 +5,11 @@
 		android:id = "@+id/user"
 		android:icon = "@drawable/bottom_menu_friend"
 		android:title = "Play with a friend"/>
+
+	<item
+		android:id="@+id/single"
+		android:icon="@drawable/bottom_menu_friend"
+		android:title="Single Game"/>
 	
 	<item
 		android:id = "@+id/group"

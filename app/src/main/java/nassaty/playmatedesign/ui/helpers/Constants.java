@@ -27,6 +27,10 @@ public class Constants {
 
     }
 
+    //mysql
+    public static final String MYSQL_BASE_URL = "https://localhost/vipibet/";
+    //firebase
+
     public static long TIME_TO_REFRESH = 10 * 1000;
     public static final long TIME_TO_OFFLINE = 2 * 60 * 1000;
     public static final String EMAIL_PATTERN = "/^[a-zA-Z0-9#_~!$&'()*+,;=:.\"(),:;<>@\\[\\]\\\\]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*$/";
@@ -35,6 +39,9 @@ public class Constants {
     public static final String GROUPS = "groups";
     public static final String GAMES = "game";
     public static final String ACTIONS = "actions";
+    public static final String GROUP_NOTIFICATIONS = "group_notifications";
+    public static final String FRIEND_NOTIFICATIONS = "friend_notifications";
+    public static final String APP_NOTIFICATIONS = "app_notifications";
     public static final int GALLERY_CODE = 1;
     public static final int PICK_IMAGE = 2;
 
@@ -54,7 +61,11 @@ public class Constants {
     public static final String DATABASE_PATH_NOTIFICATIONS = "notifications";
     public static final String DATABASE_PATH_CREDIT_CARDS = "credit_cards";
     public static final String DATABASE_PATH_COINS = "tokens";
+    public static final String DATABASE_PATH_BETS = "bet";
+    public static final String DATABASE_PATH_ACCOUNT = "account";
+    public static final String DATABASE_PATH_RESERVATIONS = "reservations";
     public static final String DATABASE_PATH_ROOM = "rooms";
+    public static final String DATABASE_PATH_REPLAY_REQUEST = "replay";
     public static final String PLAYING = "playing";
     public static final String PARTICIPANTS = "participants";
     public static final String FRIEND_TYPE = "f2f";

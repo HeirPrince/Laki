@@ -36,19 +36,20 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.agent = new FirebaseAgent(context);
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        if (notifList != null) {
-            if (notifList.get(position).getType().equals(Constants.FRIEND_TYPE)) {
-                return F2F;
-            } else if (notifList.get(position).getType().equals(Constants.GROUP_TYPE)) {
-                return GROUP;
-            }
-        } else {
-            return 0;
-        }
-        return -1;
-    }
+    //***Separates data***
+//    @Override
+//    public int getItemViewType(int position) {
+//        if (notifList != null) {
+//            if (notifList.get(position).getType().equals(Constants.FRIEND_TYPE)) {
+//                return F2F;
+//            } else if (notifList.get(position).getType().equals(Constants.GROUP_TYPE)) {
+//                return GROUP;
+//            }
+//        } else {
+//            return 0;
+//        }
+//        return -1;
+//    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -56,20 +57,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         RecyclerView.ViewHolder viewHolder;
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        switch (viewType) {
-            case F2F:
-                View f = inflater.inflate(R.layout.layout_active_list, parent, false);
-                viewHolder = new NotificationHolder(f, context);
-                break;
-            case GROUP:
-                View g = inflater.inflate(R.layout.layout_group_item, parent, false);
-                viewHolder = new GroupNotificationHolder(g);
-                break;
-            default:
-                View d = inflater.inflate(R.layout.layout_active_list, parent, false);
-                viewHolder = new NotificationHolder(d, context);
-                break;
-        }
+        View f = inflater.inflate(R.layout.layout_active_list, parent, false);
+        viewHolder = new NotificationHolder(f, context);
+
 
         return viewHolder;
     }
@@ -77,56 +67,29 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final Notif notif = notifList.get(position);
-        switch (holder.getItemViewType()) {
-            case F2F:
-                final NotificationHolder notificationHolder = (NotificationHolder) holder;
-                agent.isUserOnline(new FirebaseAgent.OnlineListener<Boolean>() {
-                    @Override
-                    public void isUserOnline(Boolean isOnline) {
-                        if (isOnline) {
-                            agent.getUserByPhone(notif.getSender(), new FirebaseAgent.addOnNameChangeListener<String>() {
-                                @Override
-                                public void onNameChangedListener(String name, String image) {
-                                    notificationHolder.feedViews(name, notif.getSender(), image, true);
-                                }
-                            });
-                        } else {
-                            agent.getUserByPhone(notif.getSender(), new FirebaseAgent.addOnNameChangeListener<String>() {
-                                @Override
-                                public void onNameChangedListener(String name, String image) {
-                                    notificationHolder.feedViews(name, notif.getSender(), image, false);
-                                }
-                            });
-                        }
-                    }
-                }, notif.getSender());
-                break;
-            case GROUP:
-                final GroupNotificationHolder groupNotificationHolder = (GroupNotificationHolder) holder;
-                if (notif.getSender() != null) {
-                    agent.isUserOnline(new FirebaseAgent.OnlineListener<Boolean>() {
+
+
+        final NotificationHolder notificationHolder = (NotificationHolder) holder;
+        agent.isUserOnline(new FirebaseAgent.OnlineListener<Boolean>() {
+            @Override
+            public void isUserOnline(Boolean isOnline) {
+                if (isOnline) {
+                    agent.getUserByPhone(notif.getSender(), new FirebaseAgent.addOnNameChangeListener<String>() {
                         @Override
-                        public void isUserOnline(Boolean isOnline) {
-                            if (isOnline) {
-                                agent.getUserByPhone(notif.getSender(), new FirebaseAgent.addOnNameChangeListener<String>() {
-                                    @Override
-                                    public void onNameChangedListener(String name, String image) {
-                                        groupNotificationHolder.setData(name, image);
-                                    }
-                                });
-                            } else {
-                                agent.getUserByPhone(notif.getSender(), new FirebaseAgent.addOnNameChangeListener<String>() {
-                                    @Override
-                                    public void onNameChangedListener(String name, String image) {
-                                        groupNotificationHolder.setData(name, image);
-                                    }
-                                });
-                            }
+                        public void onNameChangedListener(String name, String image) {
+                            notificationHolder.feedViews(name, notif.getSender(), image, true);
                         }
-                    }, notif.getSender());
+                    });
+                } else {
+                    agent.getUserByPhone(notif.getSender(), new FirebaseAgent.addOnNameChangeListener<String>() {
+                        @Override
+                        public void onNameChangedListener(String name, String image) {
+                            notificationHolder.feedViews(name, notif.getSender(), image, false);
+                        }
+                    });
                 }
-                break;
-        }
+            }
+        }, notif.getSender());
 
     }
 
@@ -197,35 +160,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             intent.putExtra("sender_position", notification.getSender_position());
             intent.putExtra("type", notification.getType());
             context.startActivity(intent);
-        }
-    }
-
-    class GroupNotificationHolder extends RecyclerView.ViewHolder {
-
-        private TextView name;
-        private CircleImageView profile;
-
-        public GroupNotificationHolder(View itemView) {
-            super(itemView);
-            name = itemView.findViewById(R.id.sender);
-            profile = itemView.findViewById(R.id.sender_image);
-        }
-
-        public void setData(String nm, String url) {
-            name.setText(nm);
-            agent.downloadImage(url, Constants.STORAGE_PATH_USERS, new FirebaseAgent.OnStatusListener<Boolean>() {
-                @Override
-                public void isComplete(Boolean status, String url) {
-                    if (status) {
-                        Glide.with(context).load(url).crossFade().centerCrop().into(profile);
-                    }
-                }
-
-                @Override
-                public void isFailed(Boolean failed) {
-
-                }
-            });
         }
     }
 }

@@ -34,7 +34,7 @@ public class HeadAdapter extends RecyclerView.Adapter<HeadAdapter.HeadHolder> {
 
     @Override
     public HeadHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_friend_head, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_group_participant, parent, false);
         return new HeadHolder(view);
     }
 

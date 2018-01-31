@@ -14,7 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,12 +48,13 @@ import io.github.yavski.fabspeeddial.FabSpeedDial;
 import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
 import nassaty.playmatedesign.R;
 import nassaty.playmatedesign.ui.fragments.Active;
-import nassaty.playmatedesign.ui.fragments.Favorite;
+import nassaty.playmatedesign.ui.fragments.GroupFrag;
 import nassaty.playmatedesign.ui.fragments.Online;
 import nassaty.playmatedesign.ui.helpers.Constants;
 import nassaty.playmatedesign.ui.model.ActiveUser;
 import nassaty.playmatedesign.ui.model.User;
 import nassaty.playmatedesign.ui.utils.FirebaseAgent;
+import nassaty.playmatedesign.ui.utils.GameServiceHelper;
 import nassaty.playmatedesign.ui.utils.PlayGround;
 
 public class MainActivity extends AppCompatActivity {
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
     private StorageReference profiles;
     private DatabaseReference online;
     private FirebaseFirestore db;
+    private GameServiceHelper helper;
 
     private static final int MY_SCAN_REQUEST_CODE = 100;
 
@@ -104,10 +106,11 @@ public class MainActivity extends AppCompatActivity {
         initUI();
 
         playGround = new PlayGround(this);
+        auth = FirebaseAuth.getInstance();
         agent = new FirebaseAgent(this);
+        helper = new GameServiceHelper(this, auth.getCurrentUser());
         online = FirebaseDatabase.getInstance().getReference().child(Constants.DATABASE_PATH_ONLINE_PLAYERS);
 
-        auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() == null){
             authenticate();
         }else {
@@ -146,6 +149,10 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.user:
                         startActivity(new Intent(MainActivity.this, chooseFriend.class));
                         break;
+                    case R.id.single:
+                        startActivity(new Intent(MainActivity.this, SingleGame.class));
+                        break;
+
                     case R.id.group:
                         startActivity(new Intent(MainActivity.this, Multi.class));
                         break;
@@ -160,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
         if (phone != null){
 
             final View header = drawer.inflateHeaderView(R.layout.drawer_header_new);
-            final Button btnLogin = header.findViewById(R.id.login_state);
 
             users.child(phone).addValueEventListener(new ValueEventListener() {
                 @Override
@@ -168,10 +174,13 @@ public class MainActivity extends AppCompatActivity {
                     final User user = dataSnapshot.getValue(User.class);
 
                     if (user != null) {
-                        btnLogin.setVisibility(View.GONE);
+                        final LinearLayout bet = header.findViewById(R.id.vals);
                         final CircleImageView dimage = header.findViewById(R.id.drawer_image);
                         final TextView dphone = header.findViewById(R.id.drawer_phone);
                         final TextView dname = header.findViewById(R.id.drawer_name);
+                        final TextView dbet = header.findViewById(R.id.bet);
+                        final TextView dreserve = header.findViewById(R.id.reserved);
+                        setDrawerValues(dreserve, dbet);
                         dname.setText(user.getUsername());
                         dphone.setText(user.getPhone_number());
                         agent.downloadImage(user.getImage(), Constants.STORAGE_PATH_USERS, new FirebaseAgent.OnStatusListener<Boolean>() {
@@ -192,6 +201,20 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
 
+                        dreserve.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                startActivity(new Intent(MainActivity.this, Reservation.class));
+                            }
+                        });
+
+                        dbet.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                startActivity(new Intent(MainActivity.this, PlaceBet.class));
+                            }
+                        });
+
                         drawer.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                             @Override
                             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -199,8 +222,13 @@ public class MainActivity extends AppCompatActivity {
                                     case R.id.pay:
                                         ViewCards();
                                         break;
+
+                                    case R.id.rem:
+                                        startActivity(new Intent(MainActivity.this, Reservation.class));
+                                        break;
+
                                     case R.id.fav:
-                                        startActivity(new Intent(MainActivity.this, AddToken.class));
+                                        startActivity(new Intent(MainActivity.this, PlaceBet.class));
                                         break;
 
                                 }
@@ -230,8 +258,8 @@ public class MainActivity extends AppCompatActivity {
     private void setUpViewPager(ViewPager pager) {
         SlideAdapter adapter = new SlideAdapter(getSupportFragmentManager());
         adapter.addFragment(new Active());
+        adapter.addFragment(new GroupFrag());
         adapter.addFragment(new Online());
-        adapter.addFragment(new Favorite());
         pager.setOffscreenPageLimit(2);
         pager.setAdapter(adapter);
     }
@@ -247,8 +275,8 @@ public class MainActivity extends AppCompatActivity {
 
         private String[] titles = new String[]{
                 "Requests",
-                "Active",
-                "Favorite"
+                "Groups",
+                "Active"
         };
 
         public List<Fragment> fragments = new ArrayList<>();
@@ -345,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.addfriend:
-                startActivity(new Intent(MainActivity.this, AddFriend.class));
+                startActivity(new Intent(MainActivity.this, Friends.class));
                 break;
 
         }
@@ -385,6 +413,22 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, results, Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public void setDrawerValues(final TextView reservation, final TextView bet){
+        agent.getReservation(auth.getCurrentUser().getPhoneNumber(), new FirebaseAgent.getReservedAmt() {
+            @Override
+            public void Amt(int amt) {
+                reservation.setText(String.valueOf(amt));
+            }
+        });
+
+        agent.getBetAmt(auth.getCurrentUser().getPhoneNumber(), new FirebaseAgent.getCurrentBet() {
+            @Override
+            public void currentBet(int amt) {
+                bet.setText(String.valueOf(amt));
+            }
+        });
     }
 
 

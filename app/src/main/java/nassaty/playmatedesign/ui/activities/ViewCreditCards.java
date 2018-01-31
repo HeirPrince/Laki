@@ -138,7 +138,7 @@ public class ViewCreditCards extends AppCompatActivity {
                         ViewCreditCards.this, new ItemClickListener.OnItemClickListener() {
             @Override
             public void OnItemClicked(View view, int position) {
-                dialogHelper.showSimpleDialog("PayBack Process", "Card chosen successfully");
+                //card msg
             }
         }));
     }

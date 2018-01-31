@@ -29,8 +29,10 @@ import com.google.firebase.storage.UploadTask;
 import nassaty.playmatedesign.ui.activities.MainActivity;
 import nassaty.playmatedesign.ui.helpers.Constants;
 import nassaty.playmatedesign.ui.model.ActiveUser;
+import nassaty.playmatedesign.ui.model.Bet;
 import nassaty.playmatedesign.ui.model.CreditCard;
 import nassaty.playmatedesign.ui.model.Player;
+import nassaty.playmatedesign.ui.model.Reserve;
 import nassaty.playmatedesign.ui.model.User;
 
 /**
@@ -54,9 +56,11 @@ public class FirebaseAgent {
     private DatabaseReference users;
     private DatabaseReference online;
     private DatabaseReference credit_cards;
+    private DatabaseReference reservations;
     private DatabaseReference friendship;
     private StorageReference storageReference;
     private DatabaseReference game_room;
+    private DatabaseReference bets;
     private Boolean isConnected;
     FirebaseAuth auth;
 
@@ -67,18 +71,41 @@ public class FirebaseAgent {
     private Context ctx;
     private User user;
 
+    public interface setReservation{
+        void isReserved(Boolean status);
+    }
+
+    public interface getReservedAmt{
+        void Amt(int amt);
+    }
+
+    public interface placeBet{
+        void isBetPlaced(Boolean state);
+    }
+
+    public interface getCurrentBet{
+        void currentBet(int amt);
+    }
+
+    public interface betAmountVerifier{
+        void verificationResult(Boolean allowed, String message);
+    }
+
+    //TODO ERROR:User is null fix it
     public FirebaseAgent(Context ctx) {
         this.ctx = ctx;
+        auth = FirebaseAuth.getInstance();
+        user = new User();
         database = FirebaseDatabase.getInstance();
+        drive = FirebaseStorage.getInstance().getReference();
+
         users = database.getReference().child(Constants.DATABASE_PATH_USERS);
         games = database.getReference().child(Constants.DATABASE_PATH_GAME_SESSIONS);
         credit_cards = database.getReference().child(Constants.DATABASE_PATH_CREDIT_CARDS);
         friendship = database.getReference().child(Constants.DATABASE_PATH_FRIENDS);
         game_room = database.getReference().child(Constants.DATABASE_PATH_GAME_SESSIONS);
-        drive = FirebaseStorage.getInstance().getReference();
         online = FirebaseDatabase.getInstance().getReference().child(Constants.DATABASE_PATH_ONLINE_PLAYERS);
-        auth = FirebaseAuth.getInstance();
-        user = new User();
+
         storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(Constants.STORAGE_PATH_URL);
     }
 
@@ -450,6 +477,90 @@ public class FirebaseAgent {
         };
 
         game_room.child(auth.getCurrentUser().getPhoneNumber()).child(type).child(game_type).addChildEventListener(listener);
+    }
+
+    public void reserveAmt(final String phone, final Reserve reservation, final setReservation callback){
+        reservations = users.child(phone).child(Constants.DATABASE_PATH_ACCOUNT).child(Constants.DATABASE_PATH_RESERVATIONS);
+        reservations.setValue(reservation).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                callback.isReserved(task.isSuccessful());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                callback.isReserved(false);
+            }
+        });
+    }
+
+    public void getReservation(final String phone, final getReservedAmt callback){
+        reservations = users.child(phone).child(Constants.DATABASE_PATH_ACCOUNT).child(Constants.DATABASE_PATH_RESERVATIONS);
+        reservations.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Reserve reserve = dataSnapshot.getValue(Reserve.class);
+                if (reserve == null) {
+                    callback.Amt(0);
+                }else {
+                    callback.Amt(reserve.getAmount());
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void betFromReserved(final String phone, Bet bet, final placeBet callback){
+        bets = users.child(phone).child(Constants.DATABASE_PATH_ACCOUNT).child(Constants.DATABASE_PATH_BETS);
+        bets.setValue(bet).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                callback.isBetPlaced(task.isSuccessful());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                callback.isBetPlaced(false);
+            }
+        });
+    }
+
+    public void getBetAmt(final String phone, final getCurrentBet callback){
+        bets = users.child(phone).child(Constants.DATABASE_PATH_ACCOUNT).child(Constants.DATABASE_PATH_BETS);
+        bets.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot != null && dataSnapshot.getValue() != null){
+                    Bet bet = dataSnapshot.getValue(Bet.class);
+                    callback.currentBet(bet.getAmt());
+                }else {
+                    callback.currentBet(0);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callback.currentBet(0);
+            }
+        });
+    }
+
+    public void checkBetEquality(String phone, final int amount, final betAmountVerifier callback){
+        getBetAmt(phone, new getCurrentBet() {
+            @Override
+            public void currentBet(int amt) {
+                if (amt == amount){
+                    callback.verificationResult(true, "Bet Amount is allowed");
+                }else {
+                    callback.verificationResult(false, "The placed bet must be equal to the opponent's");
+                }
+            }
+        });
     }
 
 

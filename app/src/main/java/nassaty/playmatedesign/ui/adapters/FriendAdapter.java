@@ -11,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -37,12 +39,16 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.DataHolder
     private FirebaseAgent agent;
     private int TYPE;
     private DatabaseReference friendship;
+    private FirebaseAuth auth;
+    private FirebaseUser active;
 
     public FriendAdapter(List<User> userList, Context ctx, int TYPE) {
         this.userList = userList;
         this.ctx = ctx;
         this.agent = new FirebaseAgent(ctx);
         this.TYPE = TYPE;
+        this.auth = FirebaseAuth.getInstance();
+        this.active = auth.getCurrentUser();
         friendship = FirebaseDatabase.getInstance().getReference().child(Constants.DATABASE_PATH_FRIENDS);
     }
 
@@ -105,7 +111,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.DataHolder
 
     class DataHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public TextView sname, sphone;
+        public TextView sname, sphone, sbet;
         public CircleImageView sprofile;
         public View online, offline;
         public Button friend, not_friend;
@@ -121,6 +127,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.DataHolder
             offline = itemView.findViewById(R.id.offline);
             friend = itemView.findViewById(R.id.friend_true);
             not_friend = itemView.findViewById(R.id.friend_false);
+            sbet = itemView.findViewById(R.id.sbet);
             this.context = ctx;
             itemView.setOnClickListener(this);
         }
@@ -128,6 +135,14 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.DataHolder
         public void chooseFriendData(String name, String phone, String image, Boolean isOnline) {
             sname.setText(name);
             sphone.setText(phone);
+
+            agent.getBetAmt(phone, new FirebaseAgent.getCurrentBet() {
+                @Override
+                public void currentBet(int amt) {
+                    sbet.setText(String.valueOf(amt));
+                }
+            });
+
             agent.downloadImage(image, Constants.STORAGE_PATH_USERS, new FirebaseAgent.OnStatusListener<Boolean>() {
                 @Override
                 public void isComplete(Boolean status, String url) {
@@ -268,9 +283,26 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.DataHolder
                     Toast.makeText(context, "really", Toast.LENGTH_SHORT).show();
                     break;
                 case 2:
-                    Intent intent = new Intent(ctx, Payment.class);
-                    intent.putExtra("opponent", user.getPhone_number());
-                    context.startActivity(intent);
+                    agent.getBetAmt(active.getPhoneNumber(), new FirebaseAgent.getCurrentBet() {
+                        @Override
+                        public void currentBet(int amt) {
+                            agent.checkBetEquality(user.getPhone_number(), amt, new FirebaseAgent.betAmountVerifier() {
+                                @Override
+                                public void verificationResult(Boolean allowed, String message) {
+                                    if (allowed){
+                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(ctx, Payment.class);
+                                        intent.putExtra("opponent", user.getPhone_number());
+                                        context.startActivity(intent);
+                                    }else {
+                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+
+                        }
+                    });
+
                     break;
                 case 3:
                     Participant participant = new Participant();

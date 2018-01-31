@@ -8,7 +8,13 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Toast;
 
+import com.yarolegovich.lovelydialog.LovelyChoiceDialog;
+import com.yarolegovich.lovelydialog.LovelyInfoDialog;
+import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
+import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
+
+import java.util.List;
 
 import biz.kasual.materialnumberpicker.MaterialNumberPicker;
 import nassaty.playmatedesign.R;
@@ -21,6 +27,11 @@ public class DialogHelper {
 
     private Context ctx;
     private MaterialNumberPicker picker;
+    private LovelyChoiceDialog choiceDialog;
+    private Dialog standardDialog;
+    private LovelyProgressDialog progressDialog;
+    private LovelyTextInputDialog textInputDialog;
+    private LovelyInfoDialog infoDialog;
 
     public DialogHelper(Context ctx) {
         this.ctx = ctx;
@@ -53,26 +64,74 @@ public class DialogHelper {
                 .build();
     }
 
-    public void showSimpleDialog(String title, String msg){
+    public void showSimpleDialog(String btnPos, String btnNeg, String title, String message, final clickedBtn clickedBtn){
 
-        final Dialog standardDialog = new LovelyStandardDialog(ctx)
-                .setTopColorRes(R.color.colorAccent)
-                .setButtonsColorRes(R.color.colorAccent)
-                .setIcon(R.drawable.payment)
+        final AlertDialog dialog = new AlertDialog.Builder(ctx)
                 .setTitle(title)
-                .setMessage(msg)
-                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                .setMessage(message)
+                .setPositiveButton(btnPos, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        Toast.makeText(ctx, "done", Toast.LENGTH_SHORT).show();
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        clickedBtn.clicked(true);
                     }
                 })
-                .setNegativeButton(android.R.string.no, null)
-                .show();
+                .setNegativeButton(btnNeg, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        clickedBtn.clicked(false);
+                    }
+                }).create();
+        dialog.show();
     }
 
+    public void showInfoDialog(String title, String message){
+        infoDialog = new LovelyInfoDialog(ctx,R.style.AppTheme)
+                .setTitle(title)
+                .setMessage(message)
+                .setCancelable(false);
+        infoDialog.show();
+    }
+
+    public void showChoiceDialog(List<String> choices, String title, String message){
+        choiceDialog = new LovelyChoiceDialog(ctx, R.style.AppTheme)
+                .setTitle(title)
+                .setTitle(message)
+                .setItemsMultiChoice(choices, new LovelyChoiceDialog.OnItemsSelectedListener<String>() {
+                    @Override
+                    public void onItemsSelected(List<Integer> list, List<String> list1) {
+                        String selected = list1.toString();
+                        Toast.makeText(ctx, selected, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        choiceDialog.show();
+    }
+
+    public void showStandardDialog(String btnPos, String btnNeg, String title, String message, final clickedBtn clickedBtn){
+        standardDialog = new LovelyStandardDialog(ctx, R.style.AppTheme)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(btnPos, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        clickedBtn.clicked(true);
+                    }
+                }).setNegativeButton(btnNeg, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        clickedBtn.clicked(false);
+                    }
+                }).show();
+    }
+
+    //interface
     public interface onPositionSelected {
         void selectedPosition(int pos);
     }
+
+    public interface clickedBtn{
+        void clicked(Boolean state);
+    }
+
 
 }

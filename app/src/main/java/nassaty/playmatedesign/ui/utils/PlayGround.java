@@ -28,6 +28,7 @@ import nassaty.playmatedesign.ui.games.F2fGame;
 import nassaty.playmatedesign.ui.helpers.Constants;
 import nassaty.playmatedesign.ui.model.ActiveUser;
 import nassaty.playmatedesign.ui.model.Game;
+import nassaty.playmatedesign.ui.model.GroupNotif;
 import nassaty.playmatedesign.ui.model.Notif;
 import nassaty.playmatedesign.ui.model.Participant;
 import nassaty.playmatedesign.ui.model.Wheel;
@@ -159,10 +160,10 @@ public class PlayGround {
     }
 
 
-    public static int overK() {
+    public int overK() {
         int duration;
-        int max = 5000;
-        int min = 1000;
+        int max = 10000;
+        int min = 3000;
 
         duration = min + r.nextInt(max);
 
@@ -459,8 +460,8 @@ public class PlayGround {
         void isCountdownDone();
     }
 
-    public void countDown(@NonNull final dotheCountDown<Boolean> countdown) {
-        CountDownTimer countDownTimer = new CountDownTimer(5000, 1000) {
+    public void countDown(int time, @NonNull final dotheCountDown<Boolean> countdown) {
+        CountDownTimer countDownTimer = new CountDownTimer(time, 1000) {
             @Override
             public void onTick(long l) {
                 countdown.isCountdown(l);
@@ -471,6 +472,7 @@ public class PlayGround {
                 countdown.isCountdownDone();
             }
         };
+        countDownTimer.start();
     }
 
     public interface isGameAprooved<T> {
@@ -538,8 +540,72 @@ public class PlayGround {
         });
     }
 
+    public interface getGameResults{
+        void results(int finalPos);
+    }
+
+    public void startGame(final View wheel, final getGameResults callback){
+        int duration = overK();
+        int d = r.nextInt(3400) + 720;
+        int degrees_old = d % 360;
+        final int degrees = d;
+
+        RotateAnimation rotate = new RotateAnimation(degrees_old, degrees, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+        rotate.setDuration(duration);
+        rotate.setFillAfter(true);
+        rotate.setInterpolator(new DecelerateInterpolator());
+        rotate.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                callback.results(getNextEndPosition(degrees));
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        wheel.startAnimation(rotate);
+    }
+
+
     public interface getResults<T>{
         void final_position(int pos, int trigger, int opponent);
+    }
+
+    public interface groupNotifications{
+        void groups(GroupNotif notif);
+    }
+
+    public void getGNotifs(String phone, final groupNotifications callback){
+        notifications.child(phone).child(Constants.GROUP_NOTIFICATIONS).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() != null){
+                    for (DataSnapshot ds : dataSnapshot.getChildren()){
+                        GroupNotif notif = ds.getValue(GroupNotif.class);
+                        if (notif == null) {
+                            callback.groups(null);
+                        }else {
+                            callback.groups(notif);
+                        }
+                    }
+                }else {
+                    callback.groups(null);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }

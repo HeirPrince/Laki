@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Random;
 
 import nassaty.playmatedesign.ui.helpers.Constants;
+import nassaty.playmatedesign.ui.helpers.SqliteHelper;
 import nassaty.playmatedesign.ui.model.GameMetaData;
 import nassaty.playmatedesign.ui.model.Player;
 import nassaty.playmatedesign.ui.model.Token;
@@ -33,16 +34,24 @@ public class GameServiceHelper {
     private FirebaseDatabase database;
     private DatabaseReference game_session;
     private DatabaseReference users;
+    private DatabaseReference replay;
+    private DatabaseReference bets;
     private Context ctx;
     private FirebaseUser active;
+    private SqliteHelper sqlite;
 
 
     public GameServiceHelper(Context context, FirebaseUser user) {
         this.ctx = context;
         this.database = FirebaseDatabase.getInstance();
-        this.game_session = database.getReference().child(Constants.DATABASE_PATH_GAME_SESSIONS);
-        this.users = database.getReference().child(Constants.DATABASE_PATH_USERS);
-        this.active = user;
+        if (user != null &&user.getPhoneNumber() != null){
+            this.game_session = database.getReference().child(Constants.DATABASE_PATH_GAME_SESSIONS);
+            this.users = database.getReference().child(Constants.DATABASE_PATH_USERS);
+            this.replay = users.child(Constants.DATABASE_PATH_REPLAY_REQUEST);
+            this.active = user;
+        }else {
+            //warning
+        }
     }
 
     //interfaces
@@ -82,7 +91,22 @@ public class GameServiceHelper {
         void items(List<Integer> items);
     }
 
+    public interface requestReplay{
+        void isRequested(Boolean status);
+    }
+
+    public interface isBetFound{
+        void isFound(Boolean status);
+    }
+
+
+
     //methods
+
+    public int getRandomPos(){
+        return new Random().nextInt(16);
+    }
+
     public void setGameSession(Player player, final createSession session) {
         game_session.child(active.getPhoneNumber()).child(Constants.FRIEND_TYPE).push().child("trigger").setValue(player).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -295,5 +319,62 @@ public class GameServiceHelper {
         int rnd = new Random().nextInt(500);
         return rnd;
     }
+
+    //sends a replay request to all numbers except the trigger
+    public void requestReplayToAllExcept(String phone, List<String> phoneNumbers){
+        for (final String p : phoneNumbers){
+            if (!p.equals(phone)){
+                sendReplayRequest(p, new requestReplay() {
+                    @Override
+                    public void isRequested(Boolean status) {
+                        if (status){
+                            Toast.makeText(ctx, "request sent to "+p, Toast.LENGTH_SHORT).show();
+                        }else {
+                            Toast.makeText(ctx, "request not sent", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    //sends replay request to a single phone
+    private void sendReplayRequest(String phone, final requestReplay callback){
+        replay.child(phone).child(Constants.DATABASE_PATH_REPLAY_REQUEST).setValue(false).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                callback.isRequested(task.isSuccessful());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                callback.isRequested(false);
+            }
+        });
+    }
+
+    public void checkBet(String phone, final isBetFound callback){
+        bets = users.child(phone).child(Constants.DATABASE_PATH_ACCOUNT).child(Constants.DATABASE_PATH_BETS);
+        bets.child("amt").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot != null && dataSnapshot.getValue() != null){
+                    String result = dataSnapshot.getValue().toString();
+                    if (Integer.valueOf(result) != 0){
+                        callback.isFound(true);
+                    }else {
+                        callback.isFound(false);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callback.isFound(false);
+            }
+        });
+    }
+
+
 
 }

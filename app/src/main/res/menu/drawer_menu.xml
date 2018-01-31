@@ -4,17 +4,17 @@
     <group android:checkableBehavior="single">
 
         <item
-            android:title="My Tokens"
+            android:title="Place a bet"
             android:id="@+id/fav"
             android:icon="@drawable/rating"/>
 
         <item
-            android:title="Reminder"
+            android:title="Reservations"
             android:id="@+id/rem"
             android:icon="@drawable/reminder"/>
 
         <item
-            android:title="Credit Cards"
+            android:title="Celebrations"
             android:id="@+id/pay"
             android:icon="@drawable/payment"/>
 

@@ -2,4 +2,5 @@
 <resources>
 	<dimen name = "activity_horizontal_margin">8dp</dimen>
 	<dimen name="toolbar_content_inset">0dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

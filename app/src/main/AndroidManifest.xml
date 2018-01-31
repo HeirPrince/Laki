@@ -43,7 +43,7 @@
                 android:value=".ui.activities.ChooseGame" />
         </activity>
         <activity android:name=".ui.activities.chooseGroup" />
-        <activity android:name=".ui.activities.AddFriend">
+        <activity android:name=".ui.activities.Friends">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.activities.MainActivity" />
@@ -78,7 +78,7 @@
         <activity android:name=".ui.activities.MaterialDesignClass" />
         <activity android:name=".ui.activities.Multi" />
         <activity android:name=".ui.activities.groupGame" />
-        <activity android:name=".ui.activities.AddToken">
+        <activity android:name=".ui.activities.PlaceBet">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.activities.MainActivity" />
@@ -88,6 +88,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.activities.MainActivity" />
         </activity>
+        <activity android:name=".ui.activities.AddFriend" />
+        <activity android:name=".ui.activities.Reservation" />
+        <activity android:name=".ui.activities.SingleGame" />
+        <activity android:name=".ui.activities.SinglePayed" />
+        <activity android:name=".ui.activities.SingleFree"/>
     </application>
 
 </manifest>

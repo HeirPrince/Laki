@@ -92,7 +92,7 @@ public class ChooseGame extends AppCompatActivity {
         btnFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(ChooseGame.this, "Favorite", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ChooseGame.this, "GroupFrag", Toast.LENGTH_SHORT).show();
             }
         });
 

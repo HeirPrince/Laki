@@ -27,13 +27,14 @@
 
     </LinearLayout>
 
-    <TextView
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="50"
-        android:textSize="50sp"
-        android:textColor="#555"
         android:layout_gravity="center_horizontal|center_vertical"
-        android:id="@+id/position" />
+        android:id="@+id/loading">
+
+        <include layout="@layout/layout_wait"/>
+
+    </RelativeLayout>
 
 </FrameLayout>

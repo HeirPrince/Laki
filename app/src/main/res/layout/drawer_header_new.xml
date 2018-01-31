@@ -1,61 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="200dp"
-    android:background="@color/colorAccent">
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/fg"
-        app:civ_border_color="#fff"
-        app:civ_border_width="4dp"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
-        android:id="@+id/drawer_image"/>
+    android:paddingTop="10dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/drawer_image"
-        android:layout_marginLeft="10dp"
-        android:orientation="vertical"
-        android:id="@+id/info">
+        android:orientation="horizontal"
+        android:layout_weight="1">
 
-        <TextView
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/fg"
+            app:civ_border_color="#ddd"
+            app:civ_border_width="4dp"
+            android:layout_marginLeft="6dp"
+            android:id="@+id/drawer_image"/>
+
+        <LinearLayout
+            android:layout_marginTop="24dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#fff"
-            android:textStyle="bold"
-            android:text="Prince"
-            android:textSize="18sp"
-            android:id="@+id/drawer_name"/>
+            android:layout_toEndOf="@+id/drawer_image"
+            android:layout_marginLeft="16dp"
+            android:orientation="vertical"
+            android:id="@+id/info"
+            android:layout_weight="2">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="+250782085695"
-            android:textColor="#fff"
-            android:layout_marginTop="6dp"
-            android:id="@+id/drawer_phone"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#464646"
+                android:textStyle="bold"
+                android:text="Prince"
+                android:textSize="18sp"
+                android:id="@+id/drawer_name"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="+250782085695"
+                android:textColor="#464646"
+                android:layout_marginTop="6dp"
+                android:id="@+id/drawer_phone"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/login_state"
-        android:layout_width="80dp"
-        android:layout_height="30dp"
-        android:background="@drawable/drawer_login_btn"
-        android:text="Login"
-        android:textSize="13sp"
-        android:textColor="@color/colorAccent"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal">
 
+        <include layout="@layout/layout_stats"/>
 
+    </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

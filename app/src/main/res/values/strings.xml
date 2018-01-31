@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Laki</string>
+    <string name="app_name">UMeBet</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -18,7 +18,7 @@
         <item>Tigo Cash</item>
         <item>Airtel Money</item>
         <item>Paypal</item>
-        <item>Mater Card</item>
+        <item>Master Card</item>
     </string-array>
 
 </resources>

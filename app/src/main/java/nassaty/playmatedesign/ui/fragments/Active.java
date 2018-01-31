@@ -62,8 +62,6 @@ public class Active extends Fragment {
     public Active() {
         // Required empty public constructor
         isGrided = false;
-        playGround = new PlayGround(getContext());
-        agent = new FirebaseAgent(getContext());
     }
 
 
@@ -88,7 +86,8 @@ public class Active extends Fragment {
         database = FirebaseDatabase.getInstance();
         storage = FirebaseStorage.getInstance();
         notifList = new ArrayList<>();
-
+        playGround = new PlayGround(getContext());
+        agent = new FirebaseAgent(getContext());
         LinearLayoutManager linear = new LinearLayoutManager(getContext());
         notif_list.setLayoutManager(linear);
         notif_list.setHasFixedSize(true);
